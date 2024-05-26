@@ -22,13 +22,7 @@ public:
         std::vector<Matrix<double>> x(output_cash);
         for (size_t i = 0; i < x.size(); ++i)
         {
-            for (size_t j = 0; j < x[i].col_size(); ++j)
-            {
-                for (size_t k = 0; k < x[i].row_size(); ++k)
-                {
-                    x[i].at(j, k) -= teacher_cash[i].at(j, k);
-                }
-            }
+            x[i] -= teacher_cash[i];
         }
         return x;
     }
@@ -77,6 +71,6 @@ private:
             }
         }
 
-        return -y;
+        return -y / (x.size() * x[0].col_size());
     }
 };

@@ -30,6 +30,17 @@ public:
         other.row = 0;
     }
 
+    Matrix(std::initializer_list<std::initializer_list<T>> init)
+        : col(init.size()), row(init.begin()->size())
+    {
+        data.reserve(col * row);
+
+        for (const auto &row : init)
+        {
+            data.insert(data.end(),row.begin(), row.end());
+        }
+    }
+
     // コピー代入演算子
     Matrix &operator=(const Matrix &other)
     {
@@ -127,6 +138,33 @@ public:
         *this = *this + other;
         return *this;
     }
+
+    friend Matrix operator-(const Matrix &a, const Matrix &b)
+    {
+        if (a.col_size() != b.col_size() || a.row_size() != b.row_size())
+        {
+            throw std::invalid_argument("Matrix dimensions must be the same for addition");
+        }
+
+        Matrix c(a.row, b.col);
+
+        for (size_t i = 0; i < a.data.size(); ++i)
+        {
+            c.data[i] = a.data[i] - b.data[i];
+        }
+        return c;
+    }
+
+    Matrix &operator-=(const Matrix &other)
+    {
+        if (col != other.col || row != other.row)
+        {
+            throw std::invalid_argument("Matrix dimensions must be the same for addition");
+        }
+
+        *this = *this - other;
+        return *this;
+    }
 };
 
 // ドット積
@@ -144,7 +182,7 @@ Matrix<T> dot(const Matrix<T> &a, const Matrix<T> &b)
     {
         for (size_t j = 0; j < b.row_size(); ++j)
         {
-            int sum = 0;
+            T sum = 0;
             for (size_t k = 0; k < a.row_size(); ++k)
             {
                 sum += a.at(i, k) * b.at(k, j);

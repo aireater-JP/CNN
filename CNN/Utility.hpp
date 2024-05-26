@@ -39,7 +39,7 @@ std::valarray<double> sum_col(const Matrix<double> &x)
     {
         for (size_t j = 0; j < x.row_size(); ++j)
         {
-            y[i] = x.at(i, j);
+            y[i] += x.at(i, j);
         }
     }
     return y;
