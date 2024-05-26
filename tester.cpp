@@ -3,6 +3,8 @@
 
 #include "CNN/Utility.hpp"
 
+#include "CNN/out.hpp"
+
 constexpr int COUNT = 1024;
 
 // ベンチマーク用のテンプレート関数
@@ -26,10 +28,28 @@ void benchmark(Func func, const std::string &funcName)
 // ベンチマーク対象の関数
 void testA()
 {
+    Matrix<int> a(3, 2, 1);
+    a.at(0, 0) = 1;
+    a.at(0, 1) = 2;
+    a.at(1, 0) = 3;
+    a.at(1, 1) = 4;
+    a.at(2, 0) = 5;
+    a.at(2, 1) = 6;
+
+    auto c = dot(a, a.transpose());
 }
 
 void testB()
 {
+    Matrix<int> a(3, 2, 1);
+    a.at(0, 0) = 1;
+    a.at(0, 1) = 2;
+    a.at(1, 0) = 3;
+    a.at(1, 1) = 4;
+    a.at(2, 0) = 5;
+    a.at(2, 1) = 6;
+
+    Matrix<int> c = dot(a, a.transpose());
 }
 
 int main()

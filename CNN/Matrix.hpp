@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <stdexcept>
 
@@ -10,6 +12,8 @@ class Matrix
 
 public:
     // コンストラクタ
+    Matrix()
+        : col(0), row(0), data() {}
     Matrix(size_t col, size_t row)
         : col(col), row(row), data(col * row) {}
     Matrix(size_t col, size_t row, const T &value)
@@ -18,7 +22,6 @@ public:
     // コピーコンストラクタ
     Matrix(const Matrix &other)
         : col(other.col), row(other.row), data(other.data) {}
-
     // ムーブコンストラクタ
     Matrix(Matrix &&other) noexcept
         : col(other.col), row(other.row), data(std::move(other.data))
@@ -46,6 +49,7 @@ public:
             col = other.col;
             row = other.row;
             data = std::move(other.data);
+
             other.col = 0;
             other.row = 0;
         }
@@ -94,7 +98,6 @@ public:
                 transposed.at(j, i) = at(i, j);
             }
         }
-
         return transposed;
     }
 
@@ -111,7 +114,6 @@ public:
         {
             c.data[i] = a.data[i] + b.data[i];
         }
-
         return c;
     }
 
@@ -123,7 +125,6 @@ public:
         }
 
         *this = *this + other;
-
         return *this;
     }
 };
