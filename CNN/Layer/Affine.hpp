@@ -11,10 +11,10 @@ class Affine : public Layer
     std::vector<Matrix<double>> input_cache;
 
 public:
-    Affine(const data_size input_size, const init_type type)
+    Affine(const data_size input_size, size_t output, const init_type type)
         : Layer(input_size),
-          W(input_size.y, input_size.z), W_gradient(input_size.y, input_size.z),
-          B(input_size.z), B_gradient(input_size.z)
+          W(input_size.z, output), W_gradient(input_size.z, output),
+          B(output), B_gradient(output)
     {
         Random<std::normal_distribution<>> r;
 

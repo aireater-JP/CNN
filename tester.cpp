@@ -26,12 +26,10 @@ void benchmark(Func func, const std::string &funcName)
 // ベンチマーク対象の関数
 void testA()
 {
-    std::vector<int> a(100, 100);
 }
 
 void testB()
 {
-    std::valarray<int> a(100, 100);
 }
 
 int main()
