@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Matrix.hpp"
 
 struct data_size
@@ -24,3 +26,8 @@ enum init_type
     Xavier,
     He
 };
+
+#include "Affine.hpp"
+#include "Convolutional.hpp"
+#include "Pooling.hpp"
+#include "ReLU.hpp"

@@ -62,6 +62,7 @@ public:
     template <typename U>
     friend Matrix<U> operator+(const Matrix<U> &a, const U &b);
     Matrix &operator+=(const Matrix &other);
+    Matrix &operator+=(const T &other);
 
     template <typename T_>
     friend Matrix<T_> operator-(const Matrix<T_> &a, const Matrix<T_> &b);

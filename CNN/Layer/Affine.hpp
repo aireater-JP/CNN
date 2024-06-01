@@ -1,5 +1,7 @@
 #include "../Layer.hpp"
 
+#include "../Random.hpp"
+
 class Affine : public Layer
 {
     Matrix<double> W;
@@ -41,7 +43,7 @@ public:
 
         for (size_t i = 0; i < y.size(); ++i)
         {
-            y[i] = add_mat_colvec(dot(x[i], W), B);
+            y[i] = dot(x[i], W) + B;
         }
         return y;
     }

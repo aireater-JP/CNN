@@ -45,12 +45,12 @@ private:
                 {
                     for (size_t n = 0; n < stride.second; ++n)
                     {
-                        if (y.at(i, j) >= x.at(m, n))
+                        size_t col = i * stride.first + m;
+                        size_t row = j * stride.second + n;
+                        if (y.at(i, j) >= x.at(col, row))
                         {
                             continue;
                         }
-                        size_t col = i * stride.first + m;
-                        size_t row = j * stride.second + n;
                         y.at(i, j) = x.at(col, row);
                         y_mask.at(i, j) = col;
                         x_mask.at(i, j) = row;

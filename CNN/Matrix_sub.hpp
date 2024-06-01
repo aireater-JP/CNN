@@ -45,6 +45,13 @@ Matrix<T> &Matrix<T>::operator+=(const Matrix &other)
 }
 
 template <typename T>
+Matrix<T> &Matrix<T>::operator+=(const T &other)
+{
+    *this = *this + other;
+    return *this;
+}
+
+template <typename T>
 Matrix<T> operator-(const Matrix<T> &a, const Matrix<T> &b)
 {
     if (a.col_size() != b.col_size() || a.row_size() != b.row_size())
