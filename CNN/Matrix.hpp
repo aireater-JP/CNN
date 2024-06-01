@@ -59,14 +59,22 @@ public:
     // 演算系
     template <typename U>
     friend Matrix<U> operator+(const Matrix<U> &a, const Matrix<U> &b);
+    template <typename U>
+    friend Matrix<U> operator+(const Matrix<U> &a, const U &b);
     Matrix &operator+=(const Matrix &other);
 
     template <typename T_>
     friend Matrix<T_> operator-(const Matrix<T_> &a, const Matrix<T_> &b);
     Matrix &operator-=(const Matrix &other);
 
+    template <typename T_>
+    friend Matrix<T_> operator*(const Matrix<T_> &a, const Matrix<T_> &b);
+    Matrix &operator*=(const Matrix &other);
+
     template <typename U>
     friend Matrix<U> exp(const Matrix<U> &x);
+    template <typename U>
+    friend Matrix<U> log(const Matrix<U> &x);
 
     ////////////////////////////////////////////////////////////////
     // 便利系
@@ -74,6 +82,8 @@ public:
     Matrix transpose() const;
 
     // 合計
+    template <typename U>
+    friend U sum(const Matrix<U> &x);
     template <typename U>
     friend std::valarray<U> sum_col(const Matrix<U> &x);
 

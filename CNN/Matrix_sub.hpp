@@ -11,11 +11,23 @@ Matrix<T> operator+(const Matrix<T> &a, const Matrix<T> &b)
         throw std::invalid_argument("この行列同士だと計算できないよ！");
     }
 
-    Matrix c(a.row, b.col);
+    Matrix c(a.col, b.row);
 
     for (size_t i = 0; i < a.data.size(); ++i)
     {
         c.data[i] = a.data[i] + b.data[i];
+    }
+    return c;
+}
+
+template <typename T>
+Matrix<T> operator+(const Matrix<T> &a, const T &b)
+{
+    Matrix<T> c(a.col, a.row);
+
+    for (size_t i = 0; i < a.data.size(); ++i)
+    {
+        c.data[i] = a.data[i] + b;
     }
     return c;
 }
@@ -40,7 +52,7 @@ Matrix<T> operator-(const Matrix<T> &a, const Matrix<T> &b)
         throw std::invalid_argument("この行列同士だと計算できないよ！");
     }
 
-    Matrix c(a.row, b.col);
+    Matrix<T> c(a.col, a.row);
 
     for (size_t i = 0; i < a.data.size(); ++i)
     {
@@ -62,12 +74,52 @@ Matrix<T> &Matrix<T>::operator-=(const Matrix &other)
 }
 
 template <typename T>
+Matrix<T> operator*(const Matrix<T> &a, const Matrix<T> &b)
+{
+    if (a.col_size() != b.col_size() || a.row_size() != b.row_size())
+    {
+        throw std::invalid_argument("この行列同士だと計算できないよ！");
+    }
+
+    Matrix<T> c(a.col, a.row);
+
+    for (size_t i = 0; i < a.data.size(); ++i)
+    {
+        c.data[i] = a.data[i] * b.data[i];
+    }
+    return c;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator*=(const Matrix &other)
+{
+    if (col != other.col || row != other.row)
+    {
+        throw std::invalid_argument("この行列同士だと計算できないよ！");
+    }
+
+    *this = *this * other;
+    return *this;
+}
+
+template <typename T>
 Matrix<T> exp(const Matrix<T> &x)
 {
     Matrix<T> y(x.col, x.row);
     for (size_t i = 0; i < x.data.size(); ++i)
     {
         y.data[i] = std::exp(x.data[i]);
+    }
+    return y;
+}
+
+template <typename T>
+Matrix<T> log(const Matrix<T> &x)
+{
+    Matrix<T> y(x.col, x.row);
+    for (size_t i = 0; i < x.data.size(); ++i)
+    {
+        y.data[i] = std::log(x.data[i]);
     }
     return y;
 }
@@ -88,6 +140,17 @@ Matrix<T> Matrix<T>::transpose() const
         }
     }
     return transposed;
+}
+
+template <typename T>
+T sum(const Matrix<T> &x)
+{
+    T y = 0;
+    for (auto &i : x.data)
+    {
+        y += i;
+    }
+    return y;
 }
 
 template <typename T>

@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "CNN/Matrix.hpp"
 
 constexpr int COUNT = 100000;
 
@@ -20,21 +21,14 @@ void benchmark(Func func, const std::string &funcName)
     std::cout << "計測結果 " << funcName << ": " << duration.count() << " ms" << std::endl;
 }
 
+
 // ベンチマーク対象の関数
 void testA()
 {
-    int a = 100;
-    int b = 100;
 }
 
 void testB()
 {
-    int a = 100;
-    int b = 100;
-    if (a == b)
-    {
-        b = a;
-    }
 }
 
 int main()

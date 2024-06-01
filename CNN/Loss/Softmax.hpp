@@ -1,3 +1,4 @@
+#pragma once
 #include "../Loss.hpp"
 
 class Softmax_with_Loss : public Loss
@@ -42,13 +43,7 @@ private:
         double y = 0;
         for (size_t i = 0; i < x.size(); ++i)
         {
-            for (size_t j = 0; j < x[i].col_size(); ++j)
-            {
-                for (size_t k = 0; k < x[i].row_size(); ++k)
-                {
-                    y += teacher[i].at(j, k) * std::log(x[i].at(j, k) + DBL_MIN);
-                }
-            }
+            y += sum(teacher[i] * log(x[i] + DBL_MIN));
         }
 
         return -y / (x.size() * x[0].col_size());
