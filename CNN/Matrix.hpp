@@ -1,7 +1,13 @@
+////////////////////////////////////////////////////////////////
+// 行列
+// ver 0.0.1 prototype
+// by Aireater
 #pragma once
 
-#include <vector>
+#include <valarray>
 #include <stdexcept>
+#include <cmath>
+#include <cfloat>
 
 template <typename T>
 class Matrix
@@ -11,6 +17,7 @@ class Matrix
     size_t row;
 
 public:
+    ////////////////////////////////////////////////////////////////
     // コンストラクタ
     Matrix()
         : col(0), row(0), data() {}
@@ -18,153 +25,70 @@ public:
         : col(col), row(row), data(col * row) {}
     Matrix(size_t col, size_t row, const T &value)
         : col(col), row(row), data(col * row, value) {}
-
-    // コピーコンストラクタ
     Matrix(const Matrix &other)
         : col(other.col), row(other.row), data(other.data) {}
-    // ムーブコンストラクタ
-    Matrix(Matrix &&other) noexcept
-        : col(other.col), row(other.row), data(std::move(other.data))
-    {
-        other.col = 0;
-        other.row = 0;
-    }
+    Matrix(Matrix &&other) noexcept;
+    Matrix(std::initializer_list<std::initializer_list<T>> init);
 
-    Matrix(std::initializer_list<std::initializer_list<T>> init)
-        : col(init.size()), row(init.begin()->size())
-    {
-        data.reserve(col * row);
+    ////////////////////////////////////////////////////////////////
+    // 代入演算子
+    Matrix &operator=(const Matrix &other);
+    Matrix &operator=(Matrix &&other) noexcept;
 
-        for (const auto &row : init)
-        {
-            data.insert(data.end(),row.begin(), row.end());
-        }
-    }
-
-    // コピー代入演算子
-    Matrix &operator=(const Matrix &other)
-    {
-        if (this != &other)
-        {
-            col = other.col;
-            row = other.row;
-            data = other.data;
-        }
-        return *this;
-    }
-    // ムーブ代入演算子
-    Matrix &operator=(Matrix &&other) noexcept
-    {
-        if (this != &other)
-        {
-            col = other.col;
-            row = other.row;
-            data = std::move(other.data);
-
-            other.col = 0;
-            other.row = 0;
-        }
-        return *this;
-    }
-
+    ////////////////////////////////////////////////////////////////
     // 要素アクセス
-    T &at(size_t i, size_t j)
-    {
-        if (i >= col || j >= row)
-        {
-            throw std::out_of_range("Index out of range");
-        }
-        return data[i * row + j];
-    }
-    const T &at(size_t i, size_t j) const
-    {
-        if (i >= col || j >= row)
-        {
-            throw std::out_of_range("Index out of range");
-        }
-        return data[i * row + j];
-    }
+    T &at(size_t i, size_t j);
+    const T &at(size_t i, size_t j) const;
+    T &at(size_t i);
+    const T &at(size_t i) const;
 
-    // 列
+    ////////////////////////////////////////////////////////////////
+    // 要素数
     constexpr size_t col_size() const { return col; }
-    // 行
     constexpr size_t row_size() const { return row; }
+    constexpr size_t size() const { return data.size(); }
 
+    ////////////////////////////////////////////////////////////////
     // イテレータ
-
     auto begin() { return data.begin(); }
     auto end() { return data.end(); }
     auto begin() const { return data.begin(); }
     auto end() const { return data.end(); }
 
+    ////////////////////////////////////////////////////////////////
+    // 演算系
+    template <typename U>
+    friend Matrix<U> operator+(const Matrix<U> &a, const Matrix<U> &b);
+    Matrix &operator+=(const Matrix &other);
+
+    template <typename T_>
+    friend Matrix<T_> operator-(const Matrix<T_> &a, const Matrix<T_> &b);
+    Matrix &operator-=(const Matrix &other);
+
+    template <typename U>
+    friend Matrix<U> exp(const Matrix<U> &x);
+
+    ////////////////////////////////////////////////////////////////
+    // 便利系
     // 転置
-    Matrix transpose() const
-    {
-        Matrix transposed(row, col);
+    Matrix transpose() const;
 
-        for (size_t i = 0; i < col; ++i)
-        {
-            for (size_t j = 0; j < row; ++j)
-            {
-                transposed.at(j, i) = at(i, j);
-            }
-        }
-        return transposed;
-    }
+    // 合計
+    template <typename U>
+    friend std::valarray<U> sum_col(const Matrix<U> &x);
 
-    friend Matrix operator+(const Matrix &a, const Matrix &b)
-    {
-        if (a.col_size() != b.col_size() || a.row_size() != b.row_size())
-        {
-            throw std::invalid_argument("Matrix dimensions must be the same for addition");
-        }
+    // 最大値
+    template <typename U>
+    friend std::valarray<U> max_col(const Matrix<U> &x);
 
-        Matrix c(a.row, b.col);
-
-        for (size_t i = 0; i < a.data.size(); ++i)
-        {
-            c.data[i] = a.data[i] + b.data[i];
-        }
-        return c;
-    }
-
-    Matrix &operator+=(const Matrix &other)
-    {
-        if (col != other.col || row != other.row)
-        {
-            throw std::invalid_argument("Matrix dimensions must be the same for addition");
-        }
-
-        *this = *this + other;
-        return *this;
-    }
-
-    friend Matrix operator-(const Matrix &a, const Matrix &b)
-    {
-        if (a.col_size() != b.col_size() || a.row_size() != b.row_size())
-        {
-            throw std::invalid_argument("Matrix dimensions must be the same for addition");
-        }
-
-        Matrix c(a.row, b.col);
-
-        for (size_t i = 0; i < a.data.size(); ++i)
-        {
-            c.data[i] = a.data[i] - b.data[i];
-        }
-        return c;
-    }
-
-    Matrix &operator-=(const Matrix &other)
-    {
-        if (col != other.col || row != other.row)
-        {
-            throw std::invalid_argument("Matrix dimensions must be the same for addition");
-        }
-
-        *this = *this - other;
-        return *this;
-    }
+    ////////////////////////////////////////////////////////////////
+    // valarray
+    template <typename U>
+    friend Matrix<U> operator+(const Matrix<U> &mat, const std::valarray<U> &vec);
+    template <typename U>
+    friend Matrix<U> operator-(const Matrix<U> &mat, const std::valarray<U> &vec);
+    template <typename U>
+    friend Matrix<U> operator/(const Matrix<U> &mat, const std::valarray<U> &vec);
 };
 
 // ドット積
@@ -173,7 +97,7 @@ Matrix<T> dot(const Matrix<T> &a, const Matrix<T> &b)
 {
     if (a.row_size() != b.col_size())
     {
-        throw std::invalid_argument("Incompatible dimensions for matrix dot product");
+        throw std::invalid_argument("この行列同士だと計算できないよ！");
     }
 
     Matrix<T> c(a.col_size(), b.row_size());
@@ -192,3 +116,12 @@ Matrix<T> dot(const Matrix<T> &a, const Matrix<T> &b)
     }
     return c;
 }
+
+// 初期化を簡単にするぞ
+std::vector<Matrix<double>> make_vec_mat(const std::vector<Matrix<double>> &x)
+{
+    return std::vector<Matrix<double>>(x.size(), Matrix<double>(x[0].col_size(), x[0].row_size()));
+}
+
+#include "Matrix_sub.hpp"
+#include "Matrix_valarray.hpp"

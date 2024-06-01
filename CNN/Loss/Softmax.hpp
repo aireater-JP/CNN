@@ -1,9 +1,5 @@
 #include "../Loss.hpp"
 
-#include <algorithm>
-#include <cmath>
-#include <cfloat>
-
 class Softmax_with_Loss : public Loss
 {
     std::vector<Matrix<double>> output_cash;
@@ -34,24 +30,8 @@ private:
 
         for (size_t i = 0; i < x.size(); ++i)
         {
-            double C = *std::max_element(x[i].begin(), x[i].end());
-
-            for (size_t j = 0; j < x[i].col_size(); ++j)
-            {
-                double sum = 0;
-                for (size_t k = 0; k < x[i].row_size(); ++k)
-                {
-                    double exp_x = std::exp(x[i].at(j, k) - C);
-
-                    y[i].at(j, k) = exp_x;
-                    sum += exp_x;
-                }
-
-                for (size_t k = 0; k < x[i].row_size(); ++k)
-                {
-                    y[i].at(j, k) /= sum;
-                }
-            }
+            Matrix<double> exp_temp = exp(x[i] - max_col(x[i]));
+            y[i] = exp_temp / sum_col(exp_temp);
         }
 
         return y;
