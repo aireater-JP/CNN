@@ -4,5 +4,7 @@
 
 int main()
 {
-
+    out("aaa");
+    newline();
+    out("aaa");
 }
