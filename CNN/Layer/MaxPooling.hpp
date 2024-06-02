@@ -1,7 +1,5 @@
 #include "../Layer.hpp"
 
-#include <cfloat>
-
 class MaxPooling : public Layer
 {
     std::pair<size_t, size_t> stride;
@@ -15,7 +13,7 @@ public:
     MaxPooling(const std::pair<size_t, size_t> stride)
         : stride(stride) {}
 
-    void set_input_size(const Matrix_size input_size) override
+    Matrix_size initialize(const Matrix_size input_size) override
     {
         Layer::input_size = input_size;
 
@@ -26,9 +24,9 @@ public:
 
         output_size.first = input_size.y / stride.first;
         output_size.second = input_size.z / stride.second;
-    }
 
-    Matrix_size get_output_size() override { return {input_size.x, output_size.first, output_size.second}; }
+        return {input_size.x, output_size.first, output_size.second};
+    }
 
     std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x) override
     {

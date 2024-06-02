@@ -10,6 +10,8 @@ class NN
     std::vector<std::unique_ptr<Layer>> layer_ptrs;
     std::unique_ptr<Loss> loss_ptr;
 
+    bool is_initialized = false;
+
 public:
     template <class T>
     void add_Layer(T &&l)
@@ -23,8 +25,23 @@ public:
         loss_ptr = std::make_unique<T>(std::move(l));
     }
 
+    void initialize(const Matrix_size input_size)
+    {
+        is_initialized = true;
+        Matrix_size x = input_size;
+        for (auto &i : layer_ptrs)
+        {
+            x = i->initialize(x);
+        }
+    }
+
     std::vector<Matrix<double>> predict(const std::vector<Matrix<double>> &x)
     {
+        if (is_initialized == false)
+        {
+            throw std::invalid_argument("initializeを呼んでね");
+        }
+
         std::vector<Matrix<double>> y = x;
         for (auto &i : layer_ptrs)
         {
@@ -54,7 +71,7 @@ public:
     {
         for (auto &i : layer_ptrs)
         {
-            //i->update(lr);
+            i->update(lr);
         }
     }
 };

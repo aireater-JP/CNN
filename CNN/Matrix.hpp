@@ -70,6 +70,8 @@ public:
 
     template <typename U>
     friend Matrix<U> operator*(const Matrix<U> &a, const Matrix<U> &b);
+    template <typename U>
+    friend Matrix<U> operator*(const Matrix<U> &a, const U &b);
     Matrix &operator*=(const Matrix &other);
 
     template <typename U>

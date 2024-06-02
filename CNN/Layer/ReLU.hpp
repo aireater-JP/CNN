@@ -5,10 +5,11 @@ class ReLU : public Layer
     std::vector<Matrix<double>> input_cash;
 
 public:
-    ReLU() {}
-
-    void set_input_size(const Matrix_size input_size) override { Layer::input_size = input_size; }
-    Matrix_size get_output_size() override { return input_size; }
+    Matrix_size initialize(const Matrix_size input_size) override
+    {
+        Layer::input_size = input_size;
+        return input_size;
+    }
 
     std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x) override
     {

@@ -19,10 +19,10 @@ class Affine : public Layer
     Init_type init_type;
 
 public:
-    Affine(const size_t output_sizes, const Init_type init_type = He)
+    Affine(const size_t output_size, const Init_type init_type = He)
         : output_size(output_size), init_type(init_type) {}
 
-    void set_input_size(const Matrix_size input_size) override
+    Matrix_size initialize(const Matrix_size input_size) override
     {
         Layer::input_size = input_size;
         W = Matrix<double>(input_size.z, output_size);
@@ -49,9 +49,9 @@ public:
         {
             i = r();
         }
-    }
 
-    Matrix_size get_output_size() override { return {input_size.x, input_size.y, output_size}; }
+        return {input_size.x, input_size.y, output_size};
+    }
 
     std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x) override
     {
@@ -80,4 +80,10 @@ public:
 
         return x_gradient;
     }
+
+    void update(const double learning_rate)
+    {
+        W += W_gradient * learning_rate;
+        B += B_gradient * learning_rate;
+    };
 };

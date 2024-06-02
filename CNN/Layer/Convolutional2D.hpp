@@ -74,6 +74,15 @@ class Convolution2D : public Layer
             return x_gradient;
         }
 
+        void update(const double learning_rate)
+        {
+            for (size_t i = 0; i < input_size.x; ++i)
+            {
+                W[i] += W_gradient[i] * learning_rate;
+            }
+            B += B_gradient * learning_rate;
+        }
+
     private:
         // 定義通りに実装
         Matrix<double> forward_cell(const Matrix<double> &x, const Matrix<double> &w)
@@ -148,7 +157,7 @@ public:
                   const std::pair<size_t, size_t> filter)
         : filter_size(filter_size), padding(padding), stride(stride), filter(filter) {}
 
-    void set_input_size(const Matrix_size input_size) override
+    Matrix_size initialize(const Matrix_size input_size) override
     {
         Layer::input_size = input_size;
 
@@ -179,9 +188,9 @@ public:
         }
 
         cell = std::vector<Cell>(filter_size, Cell(filter_size, input_size, output_size, padding, stride, filter));
-    }
 
-    Matrix_size get_output_size() override { return {filter_size, output_size.first, output_size.second}; }
+        return {filter_size, output_size.first, output_size.second};
+    }
 
     std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x) override
     {
@@ -207,4 +216,12 @@ public:
         }
         return x_gradient;
     }
+
+    void update(const double learning_rate) override
+    {
+        for (auto &i : cell)
+        {
+            i.update(learning_rate);
+        }
+    };
 };

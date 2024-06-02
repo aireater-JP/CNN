@@ -87,6 +87,18 @@ Matrix<T> operator*(const Matrix<T> &a, const Matrix<T> &b)
     return c;
 }
 
+template <typename U>
+Matrix<U> operator*(const Matrix<U> &a, const U &b)
+{
+    Matrix<U> c(a);
+
+    for (auto &i : c)
+    {
+        i *= b;
+    }
+    return c;
+}
+
 template <typename T>
 Matrix<T> &Matrix<T>::operator*=(const Matrix &other)
 {
@@ -138,6 +150,7 @@ template <typename T>
 T sum(const Matrix<T> &x)
 {
     T y = 0;
+    
     for (auto &i : x.data)
     {
         y += i;

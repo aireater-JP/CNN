@@ -1,14 +1,20 @@
 #include <bits/stdc++.h>
 
-#include "CNN/Matrix.hpp"
-
 #include "CNN/out.hpp"
-
-#include "CNN/Loss.hpp"
+#include "CNN/CNN.hpp"
 
 int main()
 {
-    Matrix<int> a={{0,0,0},{1,2,3}};    
+    NN nn;
+    nn.add_Layer(Affine(64));
+    nn.add_Layer(ReLU());
+    nn.add_Layer(Affine(10));
+    nn.set_Loss(Softmax_with_Loss());
 
-    out(a);
+    std::vector<Matrix<double>> x={{{1,2,3},{4,5,6}},{{7,8,9},{10,11,12}}};
+    std::vector<Matrix<double>> t={{{-1,-2,-3},{-4,-5,-6}},{{-7,-8,-9},{-10,-11,-12}}};
+
+    nn.initialize({2,2,3});
+
+    out(nn.gradient(x,t));
 }
