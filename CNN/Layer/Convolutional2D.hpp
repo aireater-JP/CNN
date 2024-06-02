@@ -1,9 +1,8 @@
-// plz be careful
-// ミカン
-
 #include "../Layer.hpp"
 
 #include "../Random.hpp"
+
+constexpr std::pair<size_t, size_t> PADDING_SAME = {-1, -1};
 
 class Convolution2D : public Layer
 {
@@ -24,14 +23,33 @@ class Convolution2D : public Layer
         std::pair<size_t, size_t> filter;
 
     public:
-        Cell(Matrix_size input_size,
+        Cell(size_t filter_size,
+             Matrix_size input_size,
              std::pair<size_t, size_t> output_size,
              std::pair<size_t, size_t> padding,
              std::pair<size_t, size_t> stride,
-             std::pair<size_t, size_t> filter)
+             std::pair<size_t, size_t> filter,
+             Init_type init_type = Xavier)
             : input_size(input_size), output_size(output_size), padding(padding), stride(stride),
               W(input_size.x, Matrix<double>(filter.first, filter.second)),
-              W_gradient(input_size.x, Matrix<double>(filter.first, filter.second)) {}
+              W_gradient(input_size.x, Matrix<double>(filter.first, filter.second))
+        {
+            Random<std::normal_distribution<>> r;
+            switch (init_type)
+            {
+            case Xavier:
+                r.set(0.0, 2.0 / double((filter.first * filter.second * (input_size.x + filter_size))));
+                break;
+            }
+
+            for (auto &i : W)
+            {
+                for (auto &j : i)
+                {
+                    j = r();
+                }
+            }
+        }
 
         Matrix<double> forward(const std::vector<Matrix<double>> &x)
         {
@@ -43,14 +61,14 @@ class Convolution2D : public Layer
             y += B;
             return y;
         }
-        std::vector<Matrix<double>> backward(const Matrix<double> &y, const std::vector<Matrix<double>> &x)
+        std::vector<Matrix<double>> backward(const Matrix<double> &y_gradient, const std::vector<Matrix<double>> &input_cash)
         {
             std::vector<Matrix<double>> x_gradient(input_size.x);
             for (size_t i = 0; i < input_size.x; ++i)
             {
-                x_gradient[i] = backward_cell(y, W[i], x[i], W_gradient[i]);
+                x_gradient[i] = backward_cell(y_gradient, W[i], input_cash[i], W_gradient[i]);
             }
-            B_gradient += sum(y);
+            B_gradient += sum(y_gradient);
             return x_gradient;
         }
 
@@ -81,7 +99,7 @@ class Convolution2D : public Layer
             return y;
         }
 
-        Matrix<double> backward_cell(const Matrix<double> &y, const Matrix<double> &x, const Matrix<double> &w, Matrix<double> &w_gradient)
+        Matrix<double> backward_cell(const Matrix<double> y_gradient, const Matrix<double> &input_cash, const Matrix<double> &w, Matrix<double> &w_gradient)
         {
             Matrix<double> x_gradient(input_size.y, input_size.z);
             for (size_t i = 0; i < output_size.first; ++i)
@@ -94,12 +112,12 @@ class Convolution2D : public Layer
                         {
                             size_t col = i * stride.first + m - padding.first;
                             size_t row = j * stride.second + n - padding.second;
-                            if (col >= x.col_size() or row >= x.row_size())
+                            if (col >= input_cash.col_size() or row >= input_cash.row_size())
                             {
                                 continue;
                             }
-                            x_gradient.at(col, row) += y.at(i, j) * w.at(m, n);
-                            w_gradient.at(m, n) += y.at(i, j) * x.at(col, row);
+                            x_gradient.at(col, row) += y_gradient.at(i, j) * w.at(m, n);
+                            w_gradient.at(m, n) += y_gradient.at(i, j) * input_cash.at(col, row);
                         }
                     }
                 }
@@ -133,9 +151,33 @@ public:
     {
         input_size = input_size;
 
-        // output_size計算
+        // 入力サイズと出力サイズ同じにする
+        if (padding == PADDING_SAME)
+        {
+            if ((input_size.y - filter.first - stride.first * input_size.y - stride.first) % 2 != 0 or
+                (input_size.z - filter.second - stride.second * input_size.z - stride.second) % 2 != 0)
+            {
+                throw std::invalid_argument("出力サイズが確定できません");
+            }
 
-        cell = std::vector<Cell>(filter_size, Cell(input_size, output_size, padding, stride, filter));
+            output_size.first = input_size.y;
+            output_size.second = input_size.z;
+
+            padding.first = input_size.y - filter.first - stride.first * input_size.y - stride.first;
+            padding.second = input_size.z - filter.second - stride.second * input_size.z - stride.second;
+        }
+        else
+        {
+            if ((input_size.y + 2 * padding.first - filter.first) % stride.first != 0 or
+                (input_size.z + 2 * padding.second - filter.second) % stride.second != 0)
+            {
+                throw std::invalid_argument("出力サイズが確定できません");
+            }
+            output_size.first = (input_size.y + 2 * padding.first - filter.first) / stride.first + 1;
+            output_size.second = (input_size.z + 2 * padding.second - filter.second) / stride.second + 1;
+        }
+
+        cell = std::vector<Cell>(filter_size, Cell(filter_size, input_size, output_size, padding, stride, filter));
     }
 
     Matrix_size get_output_size() override { return {filter_size, output_size.first, output_size.second}; }

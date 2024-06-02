@@ -38,7 +38,7 @@ public:
         switch (init_type)
         {
         case Xavier:
-            r.set(0.0, 1.0 / std::sqrt(input_size.z));
+            r.set(0.0, 1.0 / std::sqrt(input_size.y));
             break;
 
         case He:
@@ -64,6 +64,7 @@ public:
         {
             y[i] = dot(x[i], W) + B;
         }
+
         return y;
     }
     std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y_gradient)override
@@ -77,6 +78,7 @@ public:
             W_gradient += dot(input_cache[i].transpose(), y_gradient[i]);
             B_gradient += sum_col(y_gradient[i]);
         }
+        
         return x_gradient;
     }
 };
