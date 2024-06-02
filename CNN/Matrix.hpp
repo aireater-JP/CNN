@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////
 // 行列
-// ver 0.0.1 prototype
+// ver 0.1.0
 // by Aireater
 #pragma once
 
@@ -64,12 +64,12 @@ public:
     Matrix &operator+=(const Matrix &other);
     Matrix &operator+=(const T &other);
 
-    template <typename T_>
-    friend Matrix<T_> operator-(const Matrix<T_> &a, const Matrix<T_> &b);
+    template <typename U>
+    friend Matrix<U> operator-(const Matrix<U> &a, const Matrix<U> &b);
     Matrix &operator-=(const Matrix &other);
 
-    template <typename T_>
-    friend Matrix<T_> operator*(const Matrix<T_> &a, const Matrix<T_> &b);
+    template <typename U>
+    friend Matrix<U> operator*(const Matrix<U> &a, const Matrix<U> &b);
     Matrix &operator*=(const Matrix &other);
 
     template <typename U>
@@ -126,6 +126,37 @@ Matrix<T> dot(const Matrix<T> &a, const Matrix<T> &b)
         }
     }
     return c;
+}
+
+// 出力関数
+template <typename T>
+inline void out(const Matrix<T> &x)
+{
+    std::cout << "[";
+    for (size_t i = 0; i < x.col_size(); ++i)
+    {
+        if (i != 0)
+        {
+            std::cout << " ";
+        }
+        std::cout << "[";
+
+        for (size_t j = 0; j < x.row_size(); ++j)
+        {
+            std::cout << x.at(i, j);
+
+            if (j != x.row_size() - 1)
+            {
+                std::cout << ",";
+            }
+        }
+        std::cout << "]";
+        if (i != x.col_size() - 1)
+        {
+            std::cout << "\n";
+        }
+    }
+    std::cout << "]\n";
 }
 
 #include "Matrix_sub.hpp"

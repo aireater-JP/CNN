@@ -23,17 +23,19 @@ class Convolution2D : public Layer
         std::pair<size_t, size_t> filter;
 
     public:
-        Cell(size_t filter_size,
-             Matrix_size input_size,
-             std::pair<size_t, size_t> output_size,
-             std::pair<size_t, size_t> padding,
-             std::pair<size_t, size_t> stride,
-             std::pair<size_t, size_t> filter,
-             Init_type init_type = Xavier)
+        Cell(const size_t filter_size,
+             const Matrix_size input_size,
+             const std::pair<size_t, size_t> output_size,
+             const std::pair<size_t, size_t> padding,
+             const std::pair<size_t, size_t> stride,
+             const std::pair<size_t, size_t> filter,
+             const Init_type init_type = Xavier)
             : input_size(input_size), output_size(output_size), padding(padding), stride(stride),
+
               W(input_size.x, Matrix<double>(filter.first, filter.second)),
               W_gradient(input_size.x, Matrix<double>(filter.first, filter.second))
         {
+            // ここ用修正
             Random<std::normal_distribution<>> r;
             switch (init_type)
             {
@@ -134,22 +136,21 @@ class Convolution2D : public Layer
 
     // コンフィグ
     size_t filter_size;
-    Matrix_size input_size;
     std::pair<size_t, size_t> output_size;
     std::pair<size_t, size_t> padding;
     std::pair<size_t, size_t> stride;
     std::pair<size_t, size_t> filter;
 
 public:
-    Convolution2D(size_t filter_size,
-                  std::pair<size_t, size_t> padding,
-                  std::pair<size_t, size_t> stride,
-                  std::pair<size_t, size_t> filter)
+    Convolution2D(const size_t filter_size,
+                  const std::pair<size_t, size_t> padding,
+                  const std::pair<size_t, size_t> stride,
+                  const std::pair<size_t, size_t> filter)
         : filter_size(filter_size), padding(padding), stride(stride), filter(filter) {}
 
-    void set_input_size(Matrix_size input_size) override
+    void set_input_size(const Matrix_size input_size) override
     {
-        input_size = input_size;
+        Layer::input_size = input_size;
 
         // 入力サイズと出力サイズ同じにする
         if (padding == PADDING_SAME)
@@ -193,17 +194,17 @@ public:
         return y;
     }
 
-    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y) override
+    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y_gradient) override
     {
-        std::vector<Matrix<double>> x(input_size.x);
+        std::vector<Matrix<double>> x_gradient(input_size.x);
         for (size_t i = 0; i < input_size.x; ++i)
         {
-            std::vector<Matrix<double>> temp = cell[i].backward(y[i], input_cash);
+            std::vector<Matrix<double>> temp = cell[i].backward(y_gradient[i], input_cash);
             for (size_t j = 0; j < input_size.x; j++)
             {
-                x[i] += temp[j];
+                x_gradient[i] += temp[j];
             }
         }
-        return x;
+        return x_gradient;
     }
 };

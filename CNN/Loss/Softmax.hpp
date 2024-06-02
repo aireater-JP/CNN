@@ -12,7 +12,7 @@ public:
         teacher_cash = teacher;
         Softmax_output_cash = Softmax(x);
 
-        return cross_entropy_error(Softmax_output_cash, teacher_cash);
+        return cross_entropy_error(Softmax_output_cash, teacher);
     }
 
     std::vector<Matrix<double>> backward() override
@@ -29,7 +29,7 @@ public:
 private:
     std::vector<Matrix<double>> Softmax(const std::vector<Matrix<double>> &x)
     {
-        std::vector<Matrix<double>> y(make_vec_mat(x));
+        std::vector<Matrix<double>> y(x.size(), Matrix<double>(x[0].col_size(), x[0].row_size()));
 
         for (size_t i = 0; i < x.size(); ++i)
         {

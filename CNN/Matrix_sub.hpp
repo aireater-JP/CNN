@@ -20,14 +20,14 @@ Matrix<T> operator+(const Matrix<T> &a, const Matrix<T> &b)
     return c;
 }
 
-template <typename T>
-Matrix<T> operator+(const Matrix<T> &a, const T &b)
+template <typename U>
+Matrix<U> operator+(const Matrix<U> &a, const U &b)
 {
-    Matrix<T> c(a.col, a.row);
+    Matrix<U> c(a);
 
-    for (size_t i = 0; i < a.data.size(); ++i)
+    for (auto &i : c)
     {
-        c.data[i] = a.data[i] + b;
+        i += b;
     }
     return c;
 }
@@ -35,11 +35,6 @@ Matrix<T> operator+(const Matrix<T> &a, const T &b)
 template <typename T>
 Matrix<T> &Matrix<T>::operator+=(const Matrix &other)
 {
-    if (col != other.col || row != other.row)
-    {
-        throw std::invalid_argument("この行列同士だと計算できないよ！");
-    }
-
     *this = *this + other;
     return *this;
 }
@@ -71,11 +66,6 @@ Matrix<T> operator-(const Matrix<T> &a, const Matrix<T> &b)
 template <typename T>
 Matrix<T> &Matrix<T>::operator-=(const Matrix &other)
 {
-    if (col != other.col || row != other.row)
-    {
-        throw std::invalid_argument("この行列同士だと計算できないよ！");
-    }
-
     *this = *this - other;
     return *this;
 }
@@ -100,11 +90,6 @@ Matrix<T> operator*(const Matrix<T> &a, const Matrix<T> &b)
 template <typename T>
 Matrix<T> &Matrix<T>::operator*=(const Matrix &other)
 {
-    if (col != other.col || row != other.row)
-    {
-        throw std::invalid_argument("この行列同士だと計算できないよ！");
-    }
-
     *this = *this * other;
     return *this;
 }
@@ -112,10 +97,10 @@ Matrix<T> &Matrix<T>::operator*=(const Matrix &other)
 template <typename T>
 Matrix<T> exp(const Matrix<T> &x)
 {
-    Matrix<T> y(x.col, x.row);
-    for (size_t i = 0; i < x.data.size(); ++i)
+    Matrix<T> y(x);
+    for (auto &i : y)
     {
-        y.data[i] = std::exp(x.data[i]);
+        i = std::exp(i);
     }
     return y;
 }
@@ -123,10 +108,10 @@ Matrix<T> exp(const Matrix<T> &x)
 template <typename T>
 Matrix<T> log(const Matrix<T> &x)
 {
-    Matrix<T> y(x.col, x.row);
-    for (size_t i = 0; i < x.data.size(); ++i)
+    Matrix<T> y(x);
+    for (auto &i : y)
     {
-        y.data[i] = std::log(x.data[i]);
+        i = std::log(i);
     }
     return y;
 }

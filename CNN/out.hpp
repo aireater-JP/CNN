@@ -8,7 +8,7 @@ inline void newline()
 }
 
 // 出力
-inline void out(){};
+inline void out() {};
 
 template <typename T>
 inline void out(const T &x) { std::cout << x << " "; }

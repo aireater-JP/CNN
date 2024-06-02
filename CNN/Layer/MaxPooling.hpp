@@ -9,16 +9,15 @@ class MaxPooling : public Layer
     std::vector<Matrix<size_t>> x_mask;
     std::vector<Matrix<size_t>> y_mask;
 
-    Matrix_size input_size;
     std::pair<size_t, size_t> output_size;
 
 public:
-    MaxPooling(std::pair<size_t, size_t> stride)
+    MaxPooling(const std::pair<size_t, size_t> stride)
         : stride(stride) {}
 
-    void set_input_size(Matrix_size input_size) override
+    void set_input_size(const Matrix_size input_size) override
     {
-        input_size = input_size;
+        Layer::input_size = input_size;
 
         if (input_size.y % stride.first != 0 or input_size.z % stride.second != 0)
         {
@@ -41,14 +40,14 @@ public:
         return y;
     }
 
-    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y) override
+    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y_gradient) override
     {
-        std::vector<Matrix<double>> x(input_size.x, Matrix<double>(input_size.y, input_size.z));
+        std::vector<Matrix<double>> x_gradient(input_size.x, Matrix<double>(input_size.y, input_size.z));
         for (size_t i = 0; i < input_size.x; ++i)
         {
-            backward_pooling(y[i], x[i], y_mask[i], x_mask[i]);
+            backward_pooling(y_gradient[i], x_gradient[i], y_mask[i], x_mask[i]);
         }
-        return y;
+        return y_gradient;
     }
 
 private:
@@ -79,13 +78,13 @@ private:
         return y;
     }
 
-    void backward_pooling(const Matrix<double> &y, Matrix<double> &x, Matrix<size_t> &y_mask, Matrix<size_t> &x_mask)
+    void backward_pooling(const Matrix<double> &y_gradient, Matrix<double> &x_gradient, Matrix<size_t> &y_mask, Matrix<size_t> &x_mask)
     {
         for (size_t i = 0; i < output_size.first; ++i)
         {
             for (size_t j = 0; j < output_size.second; ++j)
             {
-                x.at(y_mask.at(i, j), x_mask.at(i, j)) = y.at(i, j);
+                x_gradient.at(y_mask.at(i, j), x_mask.at(i, j)) = y_gradient.at(i, j);
             }
         }
     }

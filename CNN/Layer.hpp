@@ -15,6 +15,9 @@ public:
 
     virtual std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x) = 0;
     virtual std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y) = 0;
+
+protected:
+    Matrix_size input_size;
 };
 
 enum Init_type
