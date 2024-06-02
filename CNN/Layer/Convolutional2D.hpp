@@ -1,7 +1,5 @@
 #include "../Layer.hpp"
 
-#include "../Random.hpp"
-
 constexpr std::pair<size_t, size_t> PADDING_SAME = {-1, -1};
 
 class Convolution2D : public Layer
@@ -78,9 +76,15 @@ class Convolution2D : public Layer
         {
             for (size_t i = 0; i < input_size.x; ++i)
             {
-                W[i] += W_gradient[i] * learning_rate;
+                W[i] -= W_gradient[i] * learning_rate;
+
+                for (auto &i : W_gradient[i])
+                {
+                    i = 0;
+                }
             }
-            B += B_gradient * learning_rate;
+            B -= B_gradient * learning_rate;
+            B = 0;
         }
 
     private:

@@ -1,7 +1,5 @@
 #include "../Layer.hpp"
 
-#include "../Random.hpp"
-
 class Affine : public Layer
 {
     // パタメーター
@@ -75,7 +73,7 @@ public:
         {
             x_gradient[i] = dot(y_gradient[i], W_transposed);
             W_gradient += dot(input_cache[i].transpose(), y_gradient[i]);
-            B_gradient += sum_col(y_gradient[i]);
+            B_gradient += sum_row(y_gradient[i]);
         }
 
         return x_gradient;
@@ -83,7 +81,15 @@ public:
 
     void update(const double learning_rate)
     {
-        W += W_gradient * learning_rate;
-        B += B_gradient * learning_rate;
+        W -= W_gradient * learning_rate;
+        for (auto &i : W_gradient)
+        {
+            i = 0;
+        }
+        B -= B_gradient * learning_rate;
+        for (auto &i : B_gradient)
+        {
+            i = 0;
+        }
     };
 };

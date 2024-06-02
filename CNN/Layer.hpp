@@ -1,11 +1,6 @@
 #pragma once
 
-#include "Matrix.hpp"
-
-struct Matrix_size
-{
-    size_t x, y, z;
-};
+#include "Utility.hpp"
 
 class Layer
 {
@@ -28,8 +23,6 @@ enum Init_type
     // ReLU
     He
 };
-
-std::vector<Matrix<double>> make_vec_mat(Matrix_size size) { return std::vector<Matrix<double>>(size.x, Matrix<double>(size.y, size.z)); }
 
 #include "Layer/Affine.hpp"
 #include "Layer/Convolutional2D.hpp"

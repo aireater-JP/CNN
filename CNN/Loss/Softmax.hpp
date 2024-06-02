@@ -18,7 +18,7 @@ public:
     std::vector<Matrix<double>> backward() override
     {
         std::vector<Matrix<double>> x_gradient(Softmax_output_cash);
-        for (size_t i = 0; i < x_gradient.size(); ++i)
+        for (size_t i = 0; i < input_size.x; ++i)
         {
             x_gradient[i] -= teacher_cash[i];
         }
@@ -29,7 +29,7 @@ public:
 private:
     std::vector<Matrix<double>> Softmax(const std::vector<Matrix<double>> &x)
     {
-        std::vector<Matrix<double>> y(x.size(), Matrix<double>(x[0].col_size(), x[0].row_size()));
+        std::vector<Matrix<double>> y(make_vec_mat(input_size));
 
         for (size_t i = 0; i < x.size(); ++i)
         {
@@ -43,11 +43,11 @@ private:
     double cross_entropy_error(const std::vector<Matrix<double>> &x_gradient, const std::vector<Matrix<double>> &teacher)
     {
         double y_gradient = 0;
-        for (size_t i = 0; i < x_gradient.size(); ++i)
+        for (size_t i = 0; i < input_size.x; ++i)
         {
             y_gradient += sum(teacher[i] * log(x_gradient[i] + DBL_MIN));
         }
 
-        return -y_gradient / (x_gradient.size() * x_gradient[0].col_size());
+        return -y_gradient / (input_size.x * input_size.y);
     }
 };

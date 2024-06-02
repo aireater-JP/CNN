@@ -174,6 +174,21 @@ col_valarray<T> sum_col(const Matrix<T> &x)
 }
 
 template <typename T>
+row_valarray<T> sum_row(const Matrix<T> &x)
+{
+    row_valarray<double> y(x.row_size());
+
+    for (size_t i = 0; i < x.col_size(); ++i)
+    {
+        for (size_t j = 0; j < x.row_size(); ++j)
+        {
+            y[j] += x.at(i, j);
+        }
+    }
+    return y;
+}
+
+template <typename T>
 col_valarray<T> max_col(const Matrix<T> &x)
 {
     col_valarray<double> y(-DBL_MAX, x.col_size());

@@ -27,12 +27,14 @@ public:
 
     void initialize(const Matrix_size input_size)
     {
-        is_initialized = true;
         Matrix_size x = input_size;
         for (auto &i : layer_ptrs)
         {
             x = i->initialize(x);
         }
+        loss_ptr->initialize(x);
+
+        is_initialized = true;
     }
 
     std::vector<Matrix<double>> predict(const std::vector<Matrix<double>> &x)

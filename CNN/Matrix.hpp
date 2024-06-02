@@ -101,7 +101,8 @@ public:
     friend U sum(const Matrix<U> &x);
     template <typename U>
     friend col_valarray<U> sum_col(const Matrix<U> &x);
-
+    template <typename U>
+    friend row_valarray<U> sum_row(const Matrix<U> &x);
     // 最大値
     template <typename U>
     friend col_valarray<U> max_col(const Matrix<U> &x);
