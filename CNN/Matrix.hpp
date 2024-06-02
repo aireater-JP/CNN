@@ -10,6 +10,18 @@
 #include <cfloat>
 
 template <typename T>
+class col_valarray : public std::valarray<T>
+{
+    using std::valarray<T>::valarray;
+};
+
+template <typename T>
+class row_valarray : public std::valarray<T>
+{
+    using std::valarray<T>::valarray;
+};
+
+template <typename T>
 class Matrix
 {
     std::vector<T> data;
@@ -88,20 +100,27 @@ public:
     template <typename U>
     friend U sum(const Matrix<U> &x);
     template <typename U>
-    friend std::valarray<U> sum_col(const Matrix<U> &x);
+    friend col_valarray<U> sum_col(const Matrix<U> &x);
 
     // 最大値
     template <typename U>
-    friend std::valarray<U> max_col(const Matrix<U> &x);
+    friend col_valarray<U> max_col(const Matrix<U> &x);
 
     ////////////////////////////////////////////////////////////////
     // valarray
     template <typename U>
-    friend Matrix<U> operator+(const Matrix<U> &mat, const std::valarray<U> &vec);
+    friend Matrix<U> operator+(const Matrix<U> &mat, const col_valarray<U> &vec);
     template <typename U>
-    friend Matrix<U> operator-(const Matrix<U> &mat, const std::valarray<U> &vec);
+    friend Matrix<U> operator-(const Matrix<U> &mat, const col_valarray<U> &vec);
     template <typename U>
-    friend Matrix<U> operator/(const Matrix<U> &mat, const std::valarray<U> &vec);
+    friend Matrix<U> operator/(const Matrix<U> &mat, const col_valarray<U> &vec);
+
+    template <typename U>
+    friend Matrix<U> operator+(const Matrix<U> &mat, const row_valarray<U> &vec);
+    template <typename U>
+    friend Matrix<U> operator-(const Matrix<U> &mat, const row_valarray<U> &vec);
+    template <typename U>
+    friend Matrix<U> operator/(const Matrix<U> &mat, const row_valarray<U> &vec);
 };
 
 // ドット積

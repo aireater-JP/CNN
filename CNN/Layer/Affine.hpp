@@ -8,8 +8,8 @@ class Affine : public Layer
     Matrix<double> W;
     Matrix<double> W_gradient;
 
-    std::valarray<double> B;
-    std::valarray<double> B_gradient;
+    row_valarray<double> B;
+    row_valarray<double> B_gradient;
 
     // キャッシュ
     std::vector<Matrix<double>> input_cache;
@@ -28,8 +28,8 @@ public:
         W = Matrix<double>(input_size.z, output_size);
         W_gradient = Matrix<double>(input_size.z, output_size);
 
-        B = std::valarray<double>(output_size);
-        B_gradient = std::valarray<double>(output_size);
+        B = row_valarray<double>(output_size);
+        B_gradient = row_valarray<double>(output_size);
 
         // 初期化しますぜ
         Random<std::normal_distribution<>> r;

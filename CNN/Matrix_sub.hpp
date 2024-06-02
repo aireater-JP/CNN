@@ -159,9 +159,9 @@ T sum(const Matrix<T> &x)
 }
 
 template <typename T>
-std::valarray<T> sum_col(const Matrix<T> &x)
+col_valarray<T> sum_col(const Matrix<T> &x)
 {
-    std::valarray<double> y(x.col_size());
+    col_valarray<double> y(x.col_size());
 
     for (size_t i = 0; i < x.col_size(); ++i)
     {
@@ -174,9 +174,9 @@ std::valarray<T> sum_col(const Matrix<T> &x)
 }
 
 template <typename T>
-std::valarray<T> max_col(const Matrix<T> &x)
+col_valarray<T> max_col(const Matrix<T> &x)
 {
-    std::valarray<double> y(-DBL_MAX, x.col_size());
+    col_valarray<double> y(-DBL_MAX, x.col_size());
 
     for (size_t i = 0; i < x.col_size(); ++i)
     {
