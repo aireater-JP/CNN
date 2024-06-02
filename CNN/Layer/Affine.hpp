@@ -35,13 +35,15 @@ public:
         // 初期化しますぜ
         Random<std::normal_distribution<>> r;
 
-        if (init_type == Xavier)
+        switch (init_type)
         {
+        case Xavier:
             r.set(0.0, 1.0 / std::sqrt(input_size.z));
-        }
-        if (init_type == He)
-        {
+            break;
+
+        case He:
             r.set(0.0, std::sqrt(2.0 / input_size.z));
+            break;
         }
 
         for (auto &i : W)
@@ -52,24 +54,24 @@ public:
 
     Matrix_size get_output_size() override { return {input_size.x, input_size.y, output_size}; }
 
-    std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x)
+    std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x)override
     {
         input_cache = x;
 
-        std::vector<Matrix<double>> y(x.size());
+        std::vector<Matrix<double>> y(input_size.x);
 
-        for (size_t i = 0; i < y.size(); ++i)
+        for (size_t i = 0; i < input_size.x; ++i)
         {
             y[i] = dot(x[i], W) + B;
         }
         return y;
     }
-    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y_gradient)
+    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y_gradient)override
     {
-        std::vector<Matrix<double>> x_gradient(y_gradient.size());
+        std::vector<Matrix<double>> x_gradient(input_size.x);
         Matrix<double> W_transposed = W.transpose();
 
-        for (size_t i = 0; i < x_gradient.size(); ++i)
+        for (size_t i = 0; i < input_size.x; ++i)
         {
             x_gradient[i] = dot(y_gradient[i], W_transposed);
             W_gradient += dot(input_cache[i].transpose(), y_gradient[i]);

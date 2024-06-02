@@ -12,10 +12,10 @@ public:
     void set_input_size(Matrix_size input_size) override { input_size = input_size; }
     Matrix_size get_output_size() override { return input_size; }
 
-    std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x)
+    std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x) override
     {
         mask = x;
-        std::vector<Matrix<double>> y(make_vec_mat(x));
+        std::vector<Matrix<double>> y(make_vec_mat(input_size));
 
         for (size_t i = 0; i < input_size.x; ++i)
         {
@@ -30,9 +30,9 @@ public:
         return y;
     }
 
-    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y)
+    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y) override
     {
-        std::vector<Matrix<double>> x(make_vec_mat(y));
+        std::vector<Matrix<double>> x(make_vec_mat(input_size));
 
         for (size_t i = 0; i < input_size.x; ++i)
         {

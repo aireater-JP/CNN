@@ -25,6 +25,8 @@ enum Init_type
     He
 };
 
+std::vector<Matrix<double>> make_vec_mat(Matrix_size size) { return std::vector<Matrix<double>>(size.x, Matrix<double>(size.y, size.z)); }
+
 #include "Affine.hpp"
 #include "Convolutional2D.hpp"
 #include "MaxPooling.hpp"

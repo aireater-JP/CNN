@@ -36,7 +36,7 @@ class Convolution2D : public Layer
         Matrix<double> forward(const std::vector<Matrix<double>> &x)
         {
             Matrix<double> y(output_size.first, output_size.second);
-            for (size_t i = 0; i < x.size(); ++i)
+            for (size_t i = 0; i < input_size.x; ++i)
             {
                 y += forward_cell(x[i], W[i]);
             }
@@ -45,8 +45,8 @@ class Convolution2D : public Layer
         }
         std::vector<Matrix<double>> backward(const Matrix<double> &y, const std::vector<Matrix<double>> &x)
         {
-            std::vector<Matrix<double>> x_gradient(x.size());
-            for (size_t i = 0; i < x.size(); ++i)
+            std::vector<Matrix<double>> x_gradient(input_size.x);
+            for (size_t i = 0; i < input_size.x; ++i)
             {
                 x_gradient[i] = backward_cell(y, W[i], x[i], W_gradient[i]);
             }
@@ -140,24 +140,24 @@ public:
 
     Matrix_size get_output_size() override { return {filter_size, output_size.first, output_size.second}; }
 
-    std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x)
+    std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x) override
     {
         input_cash = x;
-        std::vector<Matrix<double>> y(cell.size());
-        for (size_t i = 0; i < cell.size(); ++i)
+        std::vector<Matrix<double>> y(filter_size);
+        for (size_t i = 0; i < filter_size; ++i)
         {
             y[i] = cell[i].forward(x);
         }
         return y;
     }
-    
-    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y)
+
+    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y) override
     {
-        std::vector<Matrix<double>> x(input_cash.size());
-        for (size_t i = 0; i < y.size(); ++i)
+        std::vector<Matrix<double>> x(input_size.x);
+        for (size_t i = 0; i < input_size.x; ++i)
         {
             std::vector<Matrix<double>> temp = cell[i].backward(y[i], input_cash);
-            for (size_t j = 0; j < input_cash.size(); j++)
+            for (size_t j = 0; j < input_size.x; j++)
             {
                 x[i] += temp[j];
             }

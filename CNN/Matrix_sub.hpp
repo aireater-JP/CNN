@@ -11,7 +11,7 @@ Matrix<T> operator+(const Matrix<T> &a, const Matrix<T> &b)
         throw std::invalid_argument("この行列同士だと計算できないよ！");
     }
 
-    Matrix c(a.col, b.row);
+    Matrix<T> c(a.col, b.row);
 
     for (size_t i = 0; i < a.data.size(); ++i)
     {

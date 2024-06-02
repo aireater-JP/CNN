@@ -128,11 +128,5 @@ Matrix<T> dot(const Matrix<T> &a, const Matrix<T> &b)
     return c;
 }
 
-// 初期化を簡単にするぞ
-std::vector<Matrix<double>> make_vec_mat(const std::vector<Matrix<double>> &x)
-{
-    return std::vector<Matrix<double>>(x.size(), Matrix<double>(x[0].col_size(), x[0].row_size()));
-}
-
 #include "Matrix_sub.hpp"
 #include "Matrix_valarray.hpp"

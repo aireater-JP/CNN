@@ -31,7 +31,7 @@ public:
 
     Matrix_size get_output_size() override { return {input_size.x, output_size.first, output_size.second}; }
 
-    std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x)
+    std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x) override
     {
         std::vector<Matrix<double>> y(input_size.x);
         for (size_t i = 0; i < input_size.x; ++i)
@@ -41,7 +41,7 @@ public:
         return y;
     }
 
-    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y)
+    std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y) override
     {
         std::vector<Matrix<double>> x(input_size.x, Matrix<double>(input_size.y, input_size.z));
         for (size_t i = 0; i < input_size.x; ++i)
