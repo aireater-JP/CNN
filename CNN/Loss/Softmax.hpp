@@ -3,25 +3,27 @@
 
 class Softmax_with_Loss : public Loss
 {
-    std::vector<Matrix<double>> output_cash;
+    std::vector<Matrix<double>> Softmax_output_cash;
     std::vector<Matrix<double>> teacher_cash;
 
 public:
     double forward(const std::vector<Matrix<double>> &x, const std::vector<Matrix<double>> &teacher) override
     {
         teacher_cash = teacher;
-        output_cash = Softmax(x);
-        return cross_entropy_error(output_cash, teacher_cash);
+        Softmax_output_cash = Softmax(x);
+
+        return cross_entropy_error(Softmax_output_cash, teacher_cash);
     }
 
     std::vector<Matrix<double>> backward() override
     {
-        std::vector<Matrix<double>> x(output_cash);
-        for (size_t i = 0; i < x.size(); ++i)
+        std::vector<Matrix<double>> x_gradient(Softmax_output_cash);
+        for (size_t i = 0; i < x_gradient.size(); ++i)
         {
-            x[i] -= teacher_cash[i];
+            x_gradient[i] -= teacher_cash[i];
         }
-        return x;
+
+        return x_gradient;
     }
 
 private:
@@ -38,14 +40,14 @@ private:
         return y;
     }
 
-    double cross_entropy_error(const std::vector<Matrix<double>> &x, const std::vector<Matrix<double>> &teacher)
+    double cross_entropy_error(const std::vector<Matrix<double>> &x_gradient, const std::vector<Matrix<double>> &teacher)
     {
-        double y = 0;
-        for (size_t i = 0; i < x.size(); ++i)
+        double y_gradient = 0;
+        for (size_t i = 0; i < x_gradient.size(); ++i)
         {
-            y += sum(teacher[i] * log(x[i] + DBL_MIN));
+            y_gradient += sum(teacher[i] * log(x_gradient[i] + DBL_MIN));
         }
 
-        return -y / (x.size() * x[0].col_size());
+        return -y_gradient / (x_gradient.size() * x_gradient[0].col_size());
     }
 };

@@ -1,5 +1,5 @@
-//plz be careful
-//ミカン
+// plz be careful
+// ミカン
 
 #include "../Layer.hpp"
 
@@ -9,19 +9,30 @@ class Convolution2D : public Layer
 {
     class Cell
     {
+        // パラメーター
         std::vector<Matrix<double>> W;
         std::vector<Matrix<double>> W_gradient;
 
         double B;
         double B_gradient;
 
-        size_t channel;
-        std::pair<size_t, size_t> input_size;
+        // コンフィグ
+        Matrix_size input_size;
         std::pair<size_t, size_t> output_size;
         std::pair<size_t, size_t> padding;
         std::pair<size_t, size_t> stride;
+        std::pair<size_t, size_t> filter;
 
     public:
+        Cell(Matrix_size input_size,
+             std::pair<size_t, size_t> output_size,
+             std::pair<size_t, size_t> padding,
+             std::pair<size_t, size_t> stride,
+             std::pair<size_t, size_t> filter)
+            : input_size(input_size), output_size(output_size), padding(padding), stride(stride),
+              W(input_size.x, Matrix<double>(filter.first, filter.second)),
+              W_gradient(input_size.x, Matrix<double>(filter.first, filter.second)) {}
+
         Matrix<double> forward(const std::vector<Matrix<double>> &x)
         {
             Matrix<double> y(output_size.first, output_size.second);
@@ -34,8 +45,8 @@ class Convolution2D : public Layer
         }
         std::vector<Matrix<double>> backward(const Matrix<double> &y, const std::vector<Matrix<double>> &x)
         {
-            std::vector<Matrix<double>> x_gradient(channel);
-            for (size_t i = 0; i < channel; ++i)
+            std::vector<Matrix<double>> x_gradient(x.size());
+            for (size_t i = 0; i < x.size(); ++i)
             {
                 x_gradient[i] = backward_cell(y, W[i], x[i], W_gradient[i]);
             }
@@ -72,7 +83,7 @@ class Convolution2D : public Layer
 
         Matrix<double> backward_cell(const Matrix<double> &y, const Matrix<double> &x, const Matrix<double> &w, Matrix<double> &w_gradient)
         {
-            Matrix<double> x_gradient(input_size.first, input_size.second);
+            Matrix<double> x_gradient(input_size.y, input_size.z);
             for (size_t i = 0; i < output_size.first; ++i)
             {
                 for (size_t j = 0; j < output_size.second; ++j)
@@ -96,31 +107,50 @@ class Convolution2D : public Layer
             return x_gradient;
         }
     };
-    std::vector<Cell> cell;
-    size_t filter;
 
+    // パラメーター
+    std::vector<Cell> cell;
+
+    // キャッシュ
     std::vector<Matrix<double>> input_cash;
 
+    // コンフィグ
+    size_t filter_size;
+    Matrix_size input_size;
+    std::pair<size_t, size_t> output_size;
+    std::pair<size_t, size_t> padding;
+    std::pair<size_t, size_t> stride;
+    std::pair<size_t, size_t> filter;
+
 public:
-    Convolution2D(const data_size input_size, size_t filter)
-        : Layer(input_size), filter(filter), cell(filter)
+    Convolution2D(size_t filter_size,
+                  std::pair<size_t, size_t> padding,
+                  std::pair<size_t, size_t> stride,
+                  std::pair<size_t, size_t> filter)
+        : filter_size(filter_size), padding(padding), stride(stride), filter(filter) {}
+
+    void set_input_size(Matrix_size input_size) override
     {
-        for (size_t i = 0; i < filter; ++i)
-        {
-            cell.emplace_back(cell);
-        }
+        input_size = input_size;
+
+        // output_size計算
+
+        cell = std::vector<Cell>(filter_size, Cell(input_size, output_size, padding, stride, filter));
     }
+
+    Matrix_size get_output_size() override { return {filter_size, output_size.first, output_size.second}; }
 
     std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x)
     {
         input_cash = x;
-        std::vector<Matrix<double>> y(filter);
-        for (size_t i = 0; i < filter; ++i)
+        std::vector<Matrix<double>> y(cell.size());
+        for (size_t i = 0; i < cell.size(); ++i)
         {
             y[i] = cell[i].forward(x);
         }
         return y;
     }
+    
     std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y)
     {
         std::vector<Matrix<double>> x(input_cash.size());

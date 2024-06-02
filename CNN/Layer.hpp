@@ -2,32 +2,30 @@
 
 #include "Matrix.hpp"
 
-struct data_size
+struct Matrix_size
 {
     size_t x, y, z;
 };
 
 class Layer
 {
-
 public:
-    Layer(const data_size input_size) : input_size(input_size) {}
+    virtual void set_input_size(const Matrix_size input_size) = 0;
+    virtual Matrix_size get_output_size() = 0;
 
     virtual std::vector<Matrix<double>> forward(const std::vector<Matrix<double>> &x) = 0;
     virtual std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y) = 0;
-
-protected:
-    data_size input_size;
-    data_size output_size;
 };
 
-enum init_type
+enum Init_type
 {
+    // Sigmoid
     Xavier,
+    // ReLU
     He
 };
 
 #include "Affine.hpp"
-#include "Convolutional.hpp"
-#include "Pooling.hpp"
+#include "Convolutional2D.hpp"
+#include "MaxPooling.hpp"
 #include "ReLU.hpp"
