@@ -4,15 +4,23 @@
 
 int main()
 {
-    ReLU r;
-    r.initialize({1,2,4});
+    NN nn;
+    nn.add_Layer(Convolution2D(2, {0, 0}, {2, 2}, {2, 2}));
+    nn.add_Layer(ReLU());
+    nn.add_Layer(Flatten());
+    nn.add_Layer(Affine(16));
+    nn.set_Loss(Identity_with_Loss());
 
-    std::vector<Matrix<double>> a={{{1,2,-1,-2},{-9,-9,9,-9}}};
-    std::vector<Matrix<double>> b={{{100,100,100,100},{100,100,100,100}}};
+    nn.initialize({1, 4, 4});
 
-    out(a[0]);
+    std::vector<Matrix<double>> x = {{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}}};
+    std::vector<Matrix<double>> t = {{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}}};
 
-    out(r.forward(a)[0]);
+    for (size_t i = 0; i < 100; ++i)
+    {
+        out(nn.gradient(x, t));
+        nn.update(0.1);
+    }
 
-    out(r.backward(b)[0]);
+    out(nn.predict(x)[0]);
 }

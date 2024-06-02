@@ -4,8 +4,7 @@ class MaxPooling : public Layer
 {
     std::pair<size_t, size_t> stride;
 
-    std::vector<Matrix<size_t>> x_mask;
-    std::vector<Matrix<size_t>> y_mask;
+    std::vector<Matrix<std::pair<size_t, size_t>>> mask;
 
     std::pair<size_t, size_t> output_size;
 
@@ -25,6 +24,8 @@ public:
         output_size.first = input_size.y / stride.first;
         output_size.second = input_size.z / stride.second;
 
+        mask = std::vector<Matrix<std::pair<size_t, size_t>>>(input_size.x, Matrix<std::pair<size_t, size_t>>(output_size.first, output_size.second));
+
         return {input_size.x, output_size.first, output_size.second};
     }
 
@@ -33,23 +34,23 @@ public:
         std::vector<Matrix<double>> y(input_size.x);
         for (size_t i = 0; i < input_size.x; ++i)
         {
-            y[i] = forward_pooling(x[i], y_mask[i], x_mask[i]);
+            y[i] = forward_pooling(x[i], mask[i]);
         }
         return y;
     }
 
     std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y_gradient) override
     {
-        std::vector<Matrix<double>> x_gradient(input_size.x, Matrix<double>(input_size.y, input_size.z));
+        std::vector<Matrix<double>> x_gradient(make_vec_mat(input_size));
         for (size_t i = 0; i < input_size.x; ++i)
         {
-            backward_pooling(y_gradient[i], x_gradient[i], y_mask[i], x_mask[i]);
+            backward_pooling(y_gradient[i], x_gradient[i], mask[i]);
         }
-        return y_gradient;
+        return x_gradient;
     }
 
 private:
-    Matrix<double> forward_pooling(const Matrix<double> &x, Matrix<size_t> &y_mask, Matrix<size_t> &x_mask)
+    Matrix<double> forward_pooling(const Matrix<double> &x, Matrix<std::pair<size_t, size_t>> &mask)
     {
         Matrix<double> y(output_size.first, output_size.second, -DBL_MAX);
         for (size_t i = 0; i < output_size.first; ++i)
@@ -67,8 +68,8 @@ private:
                             continue;
                         }
                         y.at(i, j) = x.at(col, row);
-                        y_mask.at(i, j) = col;
-                        x_mask.at(i, j) = row;
+                        mask.at(i, j).first = col;
+                        mask.at(i, j).second = row;
                     }
                 }
             }
@@ -76,13 +77,13 @@ private:
         return y;
     }
 
-    void backward_pooling(const Matrix<double> &y_gradient, Matrix<double> &x_gradient, Matrix<size_t> &y_mask, Matrix<size_t> &x_mask)
+    void backward_pooling(const Matrix<double> &y_gradient, Matrix<double> &x_gradient, const Matrix<std::pair<size_t, size_t>> &mask)
     {
         for (size_t i = 0; i < output_size.first; ++i)
         {
             for (size_t j = 0; j < output_size.second; ++j)
             {
-                x_gradient.at(y_mask.at(i, j), x_mask.at(i, j)) = y_gradient.at(i, j);
+                x_gradient.at(mask.at(i, j).first, mask.at(i, j).second) = y_gradient.at(i, j);
             }
         }
     }

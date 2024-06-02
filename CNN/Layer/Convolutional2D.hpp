@@ -209,7 +209,7 @@ public:
 
     std::vector<Matrix<double>> backward(const std::vector<Matrix<double>> &y_gradient) override
     {
-        std::vector<Matrix<double>> x_gradient(input_size.x);
+        std::vector<Matrix<double>> x_gradient(make_vec_mat(input_size));
         for (size_t i = 0; i < input_size.x; ++i)
         {
             std::vector<Matrix<double>> temp = cell[i].backward(y_gradient[i], input_cash);

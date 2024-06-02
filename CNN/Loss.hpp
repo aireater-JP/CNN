@@ -15,3 +15,4 @@ protected:
 };
 
 #include "Loss/Softmax.hpp"
+#include "Loss/Identity.hpp"
