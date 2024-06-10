@@ -151,7 +151,7 @@ T sum(const Matrix<T> &x)
 {
     T y = 0;
     
-    for (auto &i : x.data)
+    for (auto &i : x)
     {
         y += i;
     }
@@ -202,6 +202,28 @@ col_valarray<T> max_col(const Matrix<T> &x)
     }
     return y;
 }
+
+//数学関数
+template <typename T>
+Matrix<T> Matrix<T>::tanh() const
+{
+    Matrix y(*this);
+    for(auto &i:y){
+        i=std::tanh(i);
+    }
+    return y;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::pow(const T y) const
+{
+    Matrix res(*this);
+    for(auto &i:res){
+        i=pow(i,y);
+    }
+    return res;
+}
+
 ////////////////////////////////////////////////////////////////
 // 基礎系
 ////////////////////////////////////////////////////////////////
