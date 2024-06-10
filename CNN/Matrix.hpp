@@ -86,11 +86,6 @@ public:
     friend Matrix<U> operator*(const Matrix<U> &a, const U &b);
     Matrix &operator*=(const Matrix &other);
 
-    template <typename U>
-    friend Matrix<U> exp(const Matrix<U> &x);
-    template <typename U>
-    friend Matrix<U> log(const Matrix<U> &x);
-
     ////////////////////////////////////////////////////////////////
     // 便利系
     // 転置
@@ -106,6 +101,17 @@ public:
     // 最大値
     template <typename U>
     friend col_valarray<U> max_col(const Matrix<U> &x);
+
+    // 数学関数
+    template <typename U>
+    friend Matrix<U> exp(const Matrix<U> &x);
+    template <typename U>
+    friend Matrix<U> log(const Matrix<U> &x);
+
+    template <typename U>
+    friend　Matrix<U> tanh(const Matrix<U> &x);
+    template <typename U>
+    Matrix<U> pow(const Matrix<U>&x const U y);
 
     ////////////////////////////////////////////////////////////////
     // valarray
