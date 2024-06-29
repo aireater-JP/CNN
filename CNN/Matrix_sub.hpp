@@ -1,4 +1,5 @@
-#include "Matrix.hpp"
+////////////////////////////////////////////////////////////////
+// 行列クラスの実装
 #pragma once
 
 ////////////////////////////////////////////////////////////////
@@ -193,6 +194,7 @@ Matrix<T>::Matrix(Matrix &&other) noexcept
     other.col = 0;
     other.row = 0;
 }
+
 template <typename T>
 Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> init)
     : col(init.size()), row(init.begin()->size())

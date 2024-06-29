@@ -107,8 +107,8 @@ public:
     Matrix &operator/=(const Matrix &other);
     Matrix &operator/=(const T &other);
 
-    Matrix operator+();
-    Matrix operator-();
+    Matrix operator+() const;
+    Matrix operator-() const;
 
     ////////////////////////////////////////////////////////////////
     // 便利系
@@ -137,20 +137,18 @@ public:
     friend Matrix<U> pow(const Matrix<U> &x, const U y);
 
     ////////////////////////////////////////////////////////////////
-    // valarray
-    template <typename U>
-    friend Matrix<U> operator+(const Matrix<U> &mat, const col_valarray<U> &vec);
-    template <typename U>
-    friend Matrix<U> operator-(const Matrix<U> &mat, const col_valarray<U> &vec);
-    template <typename U>
-    friend Matrix<U> operator/(const Matrix<U> &mat, const col_valarray<U> &vec);
+    // 行ベクトル、列ベクトルとの演算
+    //col
+    Matrix &operator+=(const col_valarray<T> &vec);
+    Matrix &operator-=(const col_valarray<T> &vec);
+    Matrix &operator*=(const col_valarray<T> &vec);
+    Matrix &operator/=(const col_valarray<T> &vec);
 
-    template <typename U>
-    friend Matrix<U> operator+(const Matrix<U> &mat, const row_valarray<U> &vec);
-    template <typename U>
-    friend Matrix<U> operator-(const Matrix<U> &mat, const row_valarray<U> &vec);
-    template <typename U>
-    friend Matrix<U> operator/(const Matrix<U> &mat, const row_valarray<U> &vec);
+    //row
+    Matrix &operator+=(const row_valarray<T> &vec);
+    Matrix &operator-=(const row_valarray<T> &vec);
+    Matrix &operator*=(const row_valarray<T> &vec);
+    Matrix &operator/=(const row_valarray<T> &vec);
 };
 
 // ドット積
@@ -212,4 +210,4 @@ inline void out(const Matrix<T> &x)
 
 #include "Matrix_cal.hpp"
 #include "Matrix_sub.hpp"
-#include "Matrix_valarray.hpp"
+#include "Matrix_vec.hpp"

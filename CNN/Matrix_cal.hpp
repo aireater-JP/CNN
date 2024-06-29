@@ -1,8 +1,9 @@
+////////////////////////////////////////////////////////////////
+// 行列の四則演算
 #pragma once
 
 ////////////////////////////////////////////////////////////////
 // 足し算
-////////////////////////////////////////////////////////////////
 template <typename T>
 Matrix<T> operator+(const Matrix<T> &a, const Matrix<T> &b)
 {
@@ -51,7 +52,6 @@ Matrix<T> &Matrix<T>::operator+=(const T &other)
 
 ////////////////////////////////////////////////////////////////
 // 引き算
-////////////////////////////////////////////////////////////////
 template <typename T>
 Matrix<T> operator-(const Matrix<T> &a, const Matrix<T> &b)
 {
@@ -75,17 +75,14 @@ Matrix<U> operator-(const Matrix<U> &a, const U &b)
     return c;
 }
 
-//--------------------------------------------------------------
-// 最適化ポイント
 template <typename U>
 Matrix<U> operator-(const U &a, const Matrix<U> &b)
 {
-    auto c = b;
-    c.data -= a;
+    auto c = -b;
+    c.data += a;
 
-    return -c;
+    return c;
 }
-//--------------------------------------------------------------
 
 template <typename T>
 Matrix<T> &Matrix<T>::operator-=(const Matrix &other)
@@ -103,7 +100,6 @@ Matrix<T> &Matrix<T>::operator-=(const T &other)
 
 ////////////////////////////////////////////////////////////////
 // 掛け算
-////////////////////////////////////////////////////////////////
 template <typename T>
 Matrix<T> operator*(const Matrix<T> &a, const Matrix<T> &b)
 {
@@ -152,7 +148,6 @@ Matrix<T> &Matrix<T>::operator*=(const T &other)
 
 ////////////////////////////////////////////////////////////////
 // 割り算
-////////////////////////////////////////////////////////////////
 template <typename T>
 Matrix<T> operator/(const Matrix<T> &a, const Matrix<T> &b)
 {
@@ -204,10 +199,8 @@ Matrix<T> &Matrix<T>::operator/=(const T &other)
 
 ////////////////////////////////////////////////////////////////
 // 単項
-////////////////////////////////////////////////////////////////
-
 template <typename T>
-Matrix<T> Matrix<T>::operator+()
+Matrix<T> Matrix<T>::operator+()const
 {
     Matrix<T> y(col, row);
     y.data = +(this->data);
@@ -216,7 +209,7 @@ Matrix<T> Matrix<T>::operator+()
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::operator-()
+Matrix<T> Matrix<T>::operator-()const
 {
     Matrix<T> y(col, row);
     y.data = -(this->data);
