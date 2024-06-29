@@ -51,6 +51,7 @@ public:
     // 要素アクセス
     T &at(size_t i, size_t j);
     const T &at(size_t i, size_t j) const;
+
     T &at(size_t i);
     const T &at(size_t i) const;
 
@@ -73,18 +74,37 @@ public:
     friend Matrix<U> operator+(const Matrix<U> &a, const Matrix<U> &b);
     template <typename U>
     friend Matrix<U> operator+(const Matrix<U> &a, const U &b);
+    template <typename U>
+    friend Matrix<U> operator+(const U &a, const Matrix<U> &b);
     Matrix &operator+=(const Matrix &other);
     Matrix &operator+=(const T &other);
 
     template <typename U>
     friend Matrix<U> operator-(const Matrix<U> &a, const Matrix<U> &b);
+    template <typename U>
+    friend Matrix<U> operator-(const Matrix<U> &a, const U &b);
+    template <typename U>
+    friend Matrix<U> operator-(const U &a, const Matrix<U> &b);
     Matrix &operator-=(const Matrix &other);
+    Matrix &operator-=(const T &other);
 
     template <typename U>
     friend Matrix<U> operator*(const Matrix<U> &a, const Matrix<U> &b);
     template <typename U>
     friend Matrix<U> operator*(const Matrix<U> &a, const U &b);
+    template <typename U>
+    friend Matrix<U> operator*(const U &a, const Matrix<U> &b);
     Matrix &operator*=(const Matrix &other);
+    Matrix &operator*=(const T &other);
+
+    template <typename U>
+    friend Matrix<U> operator/(const Matrix<U> &a, const Matrix<U> &b);
+    template <typename U>
+    friend Matrix<U> operator/(const Matrix<U> &a, const U &b);
+    template <typename U>
+    friend Matrix<U> operator/(const U &a, const Matrix<U> &b);
+    Matrix &operator/=(const Matrix &other);
+    Matrix &operator/=(const T &other);
 
     ////////////////////////////////////////////////////////////////
     // 便利系
@@ -107,11 +127,13 @@ public:
     friend Matrix<U> exp(const Matrix<U> &x);
     template <typename U>
     friend Matrix<U> log(const Matrix<U> &x);
+    template <typename U>
+    friend Matrix<U> tanh(const Matrix<U> &x);
+    template <typename U>
+    friend Matrix<U> pow(const Matrix<U> &x, const U y);
 
-    template <typename U>
-    friend　Matrix<U> tanh(const Matrix<U> &x);
-    template <typename U>
-    Matrix<U> pow(const Matrix<U>&x const U y);
+    Matrix operator+();
+    Matrix operator-();
 
     ////////////////////////////////////////////////////////////////
     // valarray
@@ -187,5 +209,6 @@ inline void out(const Matrix<T> &x)
     std::cout << "]\n";
 }
 
+#include "Matrix_cal.hpp"
 #include "Matrix_sub.hpp"
 #include "Matrix_valarray.hpp"

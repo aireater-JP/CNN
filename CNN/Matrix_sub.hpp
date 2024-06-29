@@ -1,111 +1,9 @@
+#include "Matrix.hpp"
 #pragma once
 
 ////////////////////////////////////////////////////////////////
 // 演算系
 ////////////////////////////////////////////////////////////////
-template <typename T>
-Matrix<T> operator+(const Matrix<T> &a, const Matrix<T> &b)
-{
-    if (a.col_size() != b.col_size() || a.row_size() != b.row_size())
-    {
-        throw std::invalid_argument("この行列同士だと計算できないよ！");
-    }
-
-    Matrix<T> c(a.col, b.row);
-
-    for (size_t i = 0; i < a.data.size(); ++i)
-    {
-        c.data[i] = a.data[i] + b.data[i];
-    }
-    return c;
-}
-
-template <typename U>
-Matrix<U> operator+(const Matrix<U> &a, const U &b)
-{
-    Matrix<U> c(a);
-
-    for (auto &i : c)
-    {
-        i += b;
-    }
-    return c;
-}
-
-template <typename T>
-Matrix<T> &Matrix<T>::operator+=(const Matrix &other)
-{
-    *this = *this + other;
-    return *this;
-}
-
-template <typename T>
-Matrix<T> &Matrix<T>::operator+=(const T &other)
-{
-    *this = *this + other;
-    return *this;
-}
-
-template <typename T>
-Matrix<T> operator-(const Matrix<T> &a, const Matrix<T> &b)
-{
-    if (a.col_size() != b.col_size() || a.row_size() != b.row_size())
-    {
-        throw std::invalid_argument("この行列同士だと計算できないよ！");
-    }
-
-    Matrix<T> c(a.col, a.row);
-
-    for (size_t i = 0; i < a.data.size(); ++i)
-    {
-        c.data[i] = a.data[i] - b.data[i];
-    }
-    return c;
-}
-
-template <typename T>
-Matrix<T> &Matrix<T>::operator-=(const Matrix &other)
-{
-    *this = *this - other;
-    return *this;
-}
-
-template <typename T>
-Matrix<T> operator*(const Matrix<T> &a, const Matrix<T> &b)
-{
-    if (a.col_size() != b.col_size() || a.row_size() != b.row_size())
-    {
-        throw std::invalid_argument("この行列同士だと計算できないよ！");
-    }
-
-    Matrix<T> c(a.col, a.row);
-
-    for (size_t i = 0; i < a.data.size(); ++i)
-    {
-        c.data[i] = a.data[i] * b.data[i];
-    }
-    return c;
-}
-
-template <typename U>
-Matrix<U> operator*(const Matrix<U> &a, const U &b)
-{
-    Matrix<U> c(a);
-
-    for (auto &i : c)
-    {
-        i *= b;
-    }
-    return c;
-}
-
-template <typename T>
-Matrix<T> &Matrix<T>::operator*=(const Matrix &other)
-{
-    *this = *this * other;
-    return *this;
-}
-
 template <typename T>
 Matrix<T> exp(const Matrix<T> &x)
 {
@@ -128,6 +26,45 @@ Matrix<T> log(const Matrix<T> &x)
     return y;
 }
 
+template <typename T>
+Matrix<T> tanh(const Matrix<T> &x)
+{
+    Matrix y(x);
+    for (auto &i : y)
+    {
+        i = std::tanh(i);
+    }
+    return y;
+}
+
+template <typename U>
+Matrix<U> pow(const Matrix<U> &x, const U y)
+{
+    Matrix res(x);
+    for (auto &i : res)
+    {
+        i = std::pow(i, y);
+    }
+    return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator+()
+{
+    Matrix<T> y(x);
+    return y;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-()
+{
+    Matrix<T> y(x);
+    for (auto &i : y)
+    {
+        i = -i;
+    }
+    return y;
+}
 ////////////////////////////////////////////////////////////////
 // 便利系
 ////////////////////////////////////////////////////////////////
@@ -150,7 +87,7 @@ template <typename T>
 T sum(const Matrix<T> &x)
 {
     T y = 0;
-    
+
     for (auto &i : x)
     {
         y += i;
@@ -201,27 +138,6 @@ col_valarray<T> max_col(const Matrix<T> &x)
         }
     }
     return y;
-}
-
-//数学関数
-template <typename T>
-Matrix<T> Matrix<T>::tanh() const
-{
-    Matrix y(*this);
-    for(auto &i:y){
-        i=std::tanh(i);
-    }
-    return y;
-}
-
-template <typename T>
-Matrix<T> Matrix<T>::pow(const T y) const
-{
-    Matrix res(*this);
-    for(auto &i:res){
-        i=pow(i,y);
-    }
-    return res;
 }
 
 ////////////////////////////////////////////////////////////////

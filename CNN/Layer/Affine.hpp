@@ -79,7 +79,7 @@ public:
         return x_gradient;
     }
 
-    void update(const double learning_rate)
+    void update(const double learning_rate) override
     {
         W -= W_gradient * learning_rate;
         for (auto &i : W_gradient)
