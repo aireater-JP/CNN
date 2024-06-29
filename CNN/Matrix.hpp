@@ -24,7 +24,7 @@ class row_valarray : public std::valarray<T>
 template <typename T>
 class Matrix
 {
-    std::vector<T> data;
+    std::valarray<T> data;
     size_t col;
     size_t row;
 
@@ -34,9 +34,9 @@ public:
     Matrix()
         : col(0), row(0), data() {}
     Matrix(size_t col, size_t row)
-        : col(col), row(row), data(col * row) {}
+        : col(col), row(row), data(T(), col * row) {}
     Matrix(size_t col, size_t row, const T &value)
-        : col(col), row(row), data(col * row, value) {}
+        : col(col), row(row), data(value, col * row) {}
     Matrix(const Matrix &other)
         : col(other.col), row(other.row), data(other.data) {}
     Matrix(Matrix &&other) noexcept;
@@ -46,6 +46,7 @@ public:
     // 代入演算子
     Matrix &operator=(const Matrix &other);
     Matrix &operator=(Matrix &&other) noexcept;
+    Matrix &operator=(const T &value);
 
     ////////////////////////////////////////////////////////////////
     // 要素アクセス
@@ -63,8 +64,8 @@ public:
 
     ////////////////////////////////////////////////////////////////
     // イテレータ
-    auto begin() { return data.begin(); }
-    auto end() { return data.end(); }
+    auto begin() { return std::begin(data); }
+    auto end() { return std::end(data); }
     auto begin() const { return data.begin(); }
     auto end() const { return data.end(); }
 
@@ -106,6 +107,9 @@ public:
     Matrix &operator/=(const Matrix &other);
     Matrix &operator/=(const T &other);
 
+    Matrix operator+();
+    Matrix operator-();
+
     ////////////////////////////////////////////////////////////////
     // 便利系
     // 転置
@@ -131,9 +135,6 @@ public:
     friend Matrix<U> tanh(const Matrix<U> &x);
     template <typename U>
     friend Matrix<U> pow(const Matrix<U> &x, const U y);
-
-    Matrix operator+();
-    Matrix operator-();
 
     ////////////////////////////////////////////////////////////////
     // valarray

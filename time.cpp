@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-//#include "CNN/Matrix.hpp"
+// #include "CNN/Matrix.hpp"
 
 constexpr int COUNT = 100000;
 
@@ -26,22 +26,13 @@ void testA()
 {
     std::valarray<std::valarray<double>> a(std::valarray<double>(9, 100), 100);
 
-    auto b = a + a;
+    auto c = a / 9.0;
 }
 
 void testB()
 {
-    std::vector<std::vector<double>> a(100, std::vector<double>(100, 9));
-
-    std::vector<std::vector<double>> b(100, std::vector<double>(100));
-
-    for (size_t i = 0; i < 100; ++i)
-    {
-        for (size_t j = 0; j < 100; ++j)
-        {
-            b[i][j] = a[i][j] + a[i][j];
-        }
-    }
+    std::valarray<std::valarray<double>> a(std::valarray<double>(9, 100), 100);
+    auto b = a;
 }
 
 int main()

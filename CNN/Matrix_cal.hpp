@@ -11,36 +11,27 @@ Matrix<T> operator+(const Matrix<T> &a, const Matrix<T> &b)
         throw std::invalid_argument("この行列同士だと計算できないよ！");
     }
 
-    Matrix<T> c(a.col, b.row);
+    auto c = a;
+    c.data += b.data;
 
-    for (size_t i = 0; i < c.data.size(); ++i)
-    {
-        c.data[i] = a.data[i] + b.data[i];
-    }
     return c;
 }
 
 template <typename U>
 Matrix<U> operator+(const Matrix<U> &a, const U &b)
 {
-    Matrix<U> c(a.col, a.row);
+    auto c = a;
+    c.data += b;
 
-    for (size_t i = 0; i < c.size(); ++i)
-    {
-        c.data[i] = a.data[i] + b;
-    }
     return c;
 }
 
 template <typename U>
 Matrix<U> operator+(const U &a, const Matrix<U> &b)
 {
-    Matrix<U> c(b.col, b.row);
+    auto c = b;
+    c.data += a;
 
-    for (size_t i = 0; i < c.size(); ++i)
-    {
-        c.data[i] = a + b.data[i];
-    }
     return c;
 }
 
@@ -69,38 +60,32 @@ Matrix<T> operator-(const Matrix<T> &a, const Matrix<T> &b)
         throw std::invalid_argument("この行列同士だと計算できないよ！");
     }
 
-    Matrix<T> c(a.col, b.row);
+    auto c = a;
+    c.data -= b.data;
 
-    for (size_t i = 0; i < c.data.size(); ++i)
-    {
-        c.data[i] = a.data[i] - b.data[i];
-    }
     return c;
 }
 
 template <typename U>
 Matrix<U> operator-(const Matrix<U> &a, const U &b)
 {
-    Matrix<U> c(a.col, a.row);
+    auto c = a;
+    c.data -= b;
 
-    for (size_t i = 0; i < c.size(); ++i)
-    {
-        c.data[i] = a.data[i] - b;
-    }
     return c;
 }
 
+//--------------------------------------------------------------
+// 最適化ポイント
 template <typename U>
 Matrix<U> operator-(const U &a, const Matrix<U> &b)
 {
-    Matrix<U> c(b.col, b.row);
+    auto c = b;
+    c.data -= a;
 
-    for (size_t i = 0; i < c.size(); ++i)
-    {
-        c.data[i] = a - b.data[i];
-    }
-    return c;
+    return -c;
 }
+//--------------------------------------------------------------
 
 template <typename T>
 Matrix<T> &Matrix<T>::operator-=(const Matrix &other)
@@ -127,36 +112,27 @@ Matrix<T> operator*(const Matrix<T> &a, const Matrix<T> &b)
         throw std::invalid_argument("この行列同士だと計算できないよ！");
     }
 
-    Matrix<T> c(a.col, b.row);
+    auto c = a;
+    c.data *= b.data;
 
-    for (size_t i = 0; i < c.data.size(); ++i)
-    {
-        c.data[i] = a.data[i] * b.data[i];
-    }
     return c;
 }
 
 template <typename U>
 Matrix<U> operator*(const Matrix<U> &a, const U &b)
 {
-    Matrix<U> c(a.col, a.row);
+    auto c = a;
+    c.data *= b;
 
-    for (size_t i = 0; i < c.size(); ++i)
-    {
-        c.data[i] = a.data[i] * b;
-    }
     return c;
 }
 
 template <typename U>
 Matrix<U> operator*(const U &a, const Matrix<U> &b)
 {
-    Matrix<U> c(b.col, b.row);
+    auto c = b;
+    c.data *= a;
 
-    for (size_t i = 0; i < c.size(); ++i)
-    {
-        c.data[i] = a * b.data[i];
-    }
     return c;
 }
 
@@ -185,38 +161,32 @@ Matrix<T> operator/(const Matrix<T> &a, const Matrix<T> &b)
         throw std::invalid_argument("この行列同士だと計算できないよ！");
     }
 
-    Matrix<T> c(a.col, b.row);
+    auto c = a;
+    c.data /= b.data;
 
-    for (size_t i = 0; i < c.data.size(); ++i)
-    {
-        c.data[i] = a.data[i] / b.data[i];
-    }
     return c;
 }
 
 template <typename U>
 Matrix<U> operator/(const Matrix<U> &a, const U &b)
 {
-    Matrix<U> c(a.col, a.row);
+    auto c = a;
+    c.data /= b;
 
-    for (size_t i = 0; i < c.size(); ++i)
-    {
-        c.data[i] = a.data[i] / b;
-    }
     return c;
 }
 
+//--------------------------------------------------------------
+// 最適化ポイント
 template <typename U>
 Matrix<U> operator/(const U &a, const Matrix<U> &b)
 {
-    Matrix<U> c(b.col, b.row);
+    Matrix<U> c(b.col, b.row, a);
+    c.data /= b.data;
 
-    for (size_t i = 0; i < c.size(); ++i)
-    {
-        c.data[i] = a / b.data[i];
-    }
     return c;
 }
+//--------------------------------------------------------------
 
 template <typename T>
 Matrix<T> &Matrix<T>::operator/=(const Matrix &other)
@@ -230,4 +200,26 @@ Matrix<T> &Matrix<T>::operator/=(const T &other)
 {
     *this = *this / other;
     return *this;
+}
+
+////////////////////////////////////////////////////////////////
+// 単項
+////////////////////////////////////////////////////////////////
+
+template <typename T>
+Matrix<T> Matrix<T>::operator+()
+{
+    Matrix<T> y(col, row);
+    y.data = +(this->data);
+
+    return y;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-()
+{
+    Matrix<T> y(col, row);
+    y.data = -(this->data);
+
+    return y;
 }

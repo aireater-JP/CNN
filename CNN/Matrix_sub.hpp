@@ -8,10 +8,7 @@ template <typename T>
 Matrix<T> exp(const Matrix<T> &x)
 {
     Matrix<T> y(x);
-    for (auto &i : y)
-    {
-        i = std::exp(i);
-    }
+    y.data = exp(y.data);
     return y;
 }
 
@@ -19,52 +16,26 @@ template <typename T>
 Matrix<T> log(const Matrix<T> &x)
 {
     Matrix<T> y(x);
-    for (auto &i : y)
-    {
-        i = std::log(i);
-    }
+    y.data = log(y.data);
     return y;
 }
 
 template <typename T>
 Matrix<T> tanh(const Matrix<T> &x)
 {
-    Matrix y(x);
-    for (auto &i : y)
-    {
-        i = std::tanh(i);
-    }
+    Matrix<T> y(x);
+    y.data = tanh(y.data);
     return y;
 }
 
 template <typename U>
 Matrix<U> pow(const Matrix<U> &x, const U y)
 {
-    Matrix res(x);
-    for (auto &i : res)
-    {
-        i = std::pow(i, y);
-    }
+    Matrix<U> res(x);
+    res.data = pow(res.data, y);
     return res;
 }
 
-template <typename T>
-Matrix<T> Matrix<T>::operator+()
-{
-    Matrix<T> y(x);
-    return y;
-}
-
-template <typename T>
-Matrix<T> Matrix<T>::operator-()
-{
-    Matrix<T> y(x);
-    for (auto &i : y)
-    {
-        i = -i;
-    }
-    return y;
-}
 ////////////////////////////////////////////////////////////////
 // 便利系
 ////////////////////////////////////////////////////////////////
@@ -86,13 +57,7 @@ Matrix<T> Matrix<T>::transpose() const
 template <typename T>
 T sum(const Matrix<T> &x)
 {
-    T y = 0;
-
-    for (auto &i : x)
-    {
-        y += i;
-    }
-    return y;
+    return x.data.sum();
 }
 
 template <typename T>
@@ -171,6 +136,16 @@ Matrix<T> &Matrix<T>::operator=(Matrix &&other) noexcept
     }
     return *this;
 }
+// コピー代入演算子
+template <typename T>
+Matrix<T> &Matrix<T>::operator=(const T &value)
+{
+    for (auto &i : *this)
+    {
+        i = value;
+    }
+    return *this;
+}
 
 // 要素アクセス
 template <typename T>
@@ -222,10 +197,15 @@ template <typename T>
 Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> init)
     : col(init.size()), row(init.begin()->size())
 {
-    data.reserve(col * row);
+    data.resize(col * row);
 
+    size_t count = 0;
     for (const auto &row : init)
     {
-        data.insert(data.end(), row.begin(), row.end());
+        for (const auto &col : row)
+        {
+            data[count] = col;
+            count++;
+        }
     }
 }
